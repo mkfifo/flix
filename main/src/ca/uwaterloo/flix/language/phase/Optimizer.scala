@@ -56,7 +56,7 @@ object Optimizer {
           // Unit == Unit is always true
           case (BinaryOperator.Equal, Unit.tpe) => True
 
-          case _ => super.foldBinary(op, exp1, exp2, tpe, loc)
+          case _ => Binary(op, exp1, exp2, tpe, loc)
         }
       }
 
@@ -76,12 +76,13 @@ object Optimizer {
                                     tpe: Type,
                                     loc: SourceLocation): Expression = cond match {
           // Condition known to be true, so replace whole expression with just the consequent expression
-          case Expression.True => super.foldExpression(exp1)
+          case Expression.True => exp1
 
           // Condition known to be false, so replace whole expression with just the alternative expression
-          case Expression.False => super.foldExpression(exp2)
+          case Expression.False => exp2
 
-          case _ => super.foldIfThenElse(cond, exp1, exp2, tpe, loc)
+          // Don't know one way or the other so we don't modify the expression
+          case _ => IfThenElse(cond, exp1, exp2, tpe, loc)
         }
       }
 
